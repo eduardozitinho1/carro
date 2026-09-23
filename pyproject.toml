@@ -1,0 +1,13 @@
+[project]
+name = "carro"
+version = "0.1.0"
+description = "Um carro, literalmente"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "typer>=0.27.2",
+]
+
+
+[project.scripts]
+carro = "carro:app"

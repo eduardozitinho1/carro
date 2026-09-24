@@ -9,20 +9,20 @@ def show_car_status(place, speed):
     console.print(
         Panel(
             f"[bold]Localização atual:[/bold] [cyan]{place}[/cyan]\n"
-            f"[bold]Velocidade atual:[/bold] "
-            f"[cyan]{speed}km/h[/cyan]",
+            f"[bold]Velocidade atual:[/bold] [cyan]{speed} km/h[/cyan]",
             title="Status do carro",
             border_style="cyan",
         )
     )
 
 
-def show_car_panel(place, speed):
+def show_car_panel(place, speed, fuel):
     console.print(
         Panel(
             f"[bold cyan]CARRO[/bold cyan]\n\n"
             f"[bold]Localização:[/bold] {place}\n"
-            f"[bold]Velocidade:[/bold] {speed} km/h",
+            f"[bold]Velocidade:[/bold] {speed} km/h\n"
+            f"[bold]Combustível:[/bold] {fuel:.2f}%",
             title="Painel do veículo",
             border_style="cyan",
         )
@@ -31,20 +31,32 @@ def show_car_panel(place, speed):
 
 def show_main_menu():
     table = Table(
-        title="O que deseja fazer com o carro atualmente?",
+        title="O que deseja fazer?",
         border_style="blue",
         show_header=True,
         header_style="bold cyan",
     )
 
-    table.add_column("Opção", style="bold yellow", justify="center")
-    table.add_column("Ação", style="white")
+    table.add_column(
+        "Opção",
+        style="bold yellow",
+        justify="center",
+    )
 
-    table.add_row("1", "Ver velocidade atual")
+    table.add_column(
+        "Ação",
+        style="white",
+    )
+
+    table.add_row("1", "Ver status do carro")
     table.add_row("2", "Acelerar")
     table.add_row("3", "Desacelerar")
     table.add_row("4", "Parar")
     table.add_row("5", "Viajar")
+    table.add_row("6", "Trabalhar")
+    table.add_row("7", "Ver status do jogador")
+    table.add_row("8", "Upgrades")
+    table.add_row("9", "Abastecer")
     table.add_row("s", "Sair")
 
     console.print(table)
@@ -58,10 +70,21 @@ def show_destinations(destinations):
         header_style="bold green",
     )
 
-    table.add_column("#", style="bold yellow", justify="right")
-    table.add_column("Destino", style="white")
+    table.add_column(
+        "#",
+        style="bold yellow",
+        justify="right",
+    )
+
+    table.add_column(
+        "Destino",
+        style="white",
+    )
 
     for number, place in enumerate(destinations, start=1):
-        table.add_row(str(number), place)
+        table.add_row(
+            str(number),
+            place,
+        )
 
     console.print(table)

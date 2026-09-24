@@ -1,9 +1,13 @@
 from decimal import Decimal
 import typer
-from rich.progress import track
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
+from rich.table import Table
 from time import sleep
 
 app = typer.Typer()
+console = Console()
 
 places = {
     "Rio de Janeiro": 435,
@@ -34,6 +38,7 @@ places = {
     "Amapá": 3320,
     "São Paulo": 0,
 }
+
 
 class Car:
     """
@@ -69,34 +74,49 @@ class Car:
     def accelerate(self, speed):
         try:
             self.speed += speed
-            print(f"Carro acelerou {speed}km/h! Agora ele está a {self.speed}km/h")
+            console.print(
+                f"[bold green]Carro acelerou {speed}km/h![/bold green] "
+                f"Agora ele está a [bold cyan]{self.speed}km/h[/bold cyan]"
+            )
         except ValueError:
-            print("Velocidade do carro é muito grande, o carro pode quebrar")
+            console.print(
+                "[bold red]Velocidade do carro é muito grande, "
+                "o carro pode quebrar[/bold red]"
+            )
 
     def decelerate(self, speed):
         try:
             self.speed -= speed
-            print(f"Carro desacelerou {speed}km/h! Agora ele está a {self.speed}km/h")
+            console.print(
+                f"[bold yellow]Carro desacelerou {speed}km/h![/bold yellow] "
+                f"Agora ele está a [bold cyan]{self.speed}km/h[/bold cyan]"
+            )
         except ValueError:
-            print("O carro não tem potência o suficiente para ir muito para trás")
+            console.print(
+                "[bold red]O carro não tem potência o suficiente "
+                "para ir muito para trás[/bold red]"
+            )
 
     def stop(self):
         if not self.running():
-            print("Já está parado")
+            console.print("[bold yellow]Já está parado[/bold yellow]")
         else:
             self.speed = 0
+            console.print("[bold green]Carro parado.[/bold green]")
 
     def travel(self, place):
         if place not in places:
-            print("Não existe esse lugar, pô")
+            console.print("[bold red]Não existe esse lugar, pô[/bold red]")
             return
 
         if self.speed <= 0:
-            print("O carro precisa estar andando para viajar")
+            console.print(
+                "[bold red]O carro precisa estar andando para viajar[/bold red]"
+            )
             return
 
         if place == self.place:
-            print("O carro já está nesse lugar")
+            console.print("[bold yellow]O carro já está nesse lugar[/bold yellow]")
             return
 
         distance = abs(places[self.place] - places[place])
@@ -106,14 +126,29 @@ class Car:
 
         steps = 100
 
-        for _ in track(
-            range(steps),
-            description=f"Viajando para {place}...",
-        ):
-            sleep(simulation_seconds / steps)
+        with Progress(
+            TextColumn("[bold cyan]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TimeRemainingColumn(),
+        ) as progress:
+            task = progress.add_task(
+                f"Viajando para {place}...",
+                total=steps,
+            )
+
+            for _ in range(steps):
+                sleep(simulation_seconds / steps)
+                progress.advance(task)
 
         self._place = place
-        print(f"Você chegou em {place}!")
+        console.print(
+            Panel(
+                f"[bold green]Você chegou em {place}![/bold green]",
+                border_style="green",
+            )
+        )
+
 
 carro = Car()
 
@@ -121,31 +156,63 @@ carro = Car()
 @app.command()
 def main():
     while True:
-        opt = input(
-            'O que deseja fazer com o carro atualmente? (digite "s" para sair)\n'
-            '1. Ver velocidade atual\n'
-            '2. Acelerar\n'
-            '3. Desacelerar\n'
-            '4. Parar\n'
-            '5. Viajar\n'
-            '> '
+        console.print(
+            Panel(
+                f"[bold cyan]CARRO[/bold cyan]\n\n"
+                f"[bold]Localização:[/bold] {carro.place}\n"
+                f"[bold]Velocidade:[/bold] {carro.speed} km/h",
+                title="Painel do veículo",
+                border_style="cyan",
+            )
         )
+
+        table = Table(
+            title="O que deseja fazer com o carro atualmente?",
+            border_style="blue",
+            show_header=True,
+            header_style="bold cyan",
+        )
+
+        table.add_column("Opção", style="bold yellow", justify="center")
+        table.add_column("Ação", style="white")
+
+        table.add_row("1", "Ver velocidade atual")
+        table.add_row("2", "Acelerar")
+        table.add_row("3", "Desacelerar")
+        table.add_row("4", "Parar")
+        table.add_row("5", "Viajar")
+        table.add_row("s", "Sair")
+
+        console.print(table)
+
+        opt = console.input("[bold cyan]> [/bold cyan]")
 
         match opt:
             case "1":
-                print(f"Localização atual: {carro.place}")
-                print(f"A velocidade atual do seu carro é de {carro.speed}km/h")
+                console.print(
+                    Panel(
+                        f"[bold]Localização atual:[/bold] [cyan]{carro.place}[/cyan]\n"
+                        f"[bold]Velocidade atual:[/bold] "
+                        f"[cyan]{carro.speed}km/h[/cyan]",
+                        title="Status do carro",
+                        border_style="cyan",
+                    )
+                )
 
             case "2":
                 speed = Decimal(
-                    input("Quanto é a quantidade que você quer acelerar? (Em km/h): ")
+                    console.input(
+                        "[bold cyan]Quanto é a quantidade que você quer "
+                        "acelerar? (Em km/h): [/bold cyan]"
+                    )
                 )
                 carro.accelerate(speed)
 
             case "3":
                 speed = Decimal(
-                    input(
-                        "Quanto é a quantidade que você quer desacelerar? (Em km/h): "
+                    console.input(
+                        "[bold cyan]Quanto é a quantidade que você quer "
+                        "desacelerar? (Em km/h): [/bold cyan]"
                     )
                 )
                 carro.decelerate(speed)
@@ -156,27 +223,49 @@ def main():
             case "5":
                 destinations = list(places.keys())
 
-                print("\nEscolha o destino:")
+                table = Table(
+                    title="Escolha o destino",
+                    border_style="green",
+                    show_header=True,
+                    header_style="bold green",
+                )
+
+                table.add_column("#", style="bold yellow", justify="right")
+                table.add_column("Destino", style="white")
+
                 for number, place in enumerate(destinations, start=1):
-                    print(f"{number:2}. {place}")
+                    table.add_row(str(number), place)
+
+                console.print(table)
 
                 try:
-                    destination = int(input("> "))
+                    destination = int(
+                        console.input("[bold green]> [/bold green]")
+                    )
                 except ValueError:
-                    print("Digite o número correspondente ao destino")
+                    console.print(
+                        "[bold red]Digite o número correspondente ao destino[/bold red]"
+                    )
                     continue
 
                 if not 1 <= destination <= len(destinations):
-                    print("Destino inválido")
+                    console.print("[bold red]Destino inválido[/bold red]")
                     continue
 
                 carro.travel(destinations[destination - 1])
 
             case "s":
+                console.print(
+                    Panel(
+                        "[bold cyan]Até a próxima![/bold cyan]",
+                        border_style="cyan",
+                    )
+                )
                 break
 
             case _:
-                print("Opção inválida")
+                console.print("[bold red]Opção inválida[/bold red]")
+
 
 if __name__ == "__main__":
     main()

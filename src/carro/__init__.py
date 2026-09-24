@@ -50,7 +50,7 @@ class Car:
 
 carro = Car()
 
-@app.command
+@app.command()
 def main():
     while True:
         opt = input("O que deseja fazer com o carro atualmente? (digite \"s\" para sair)\n1. Ver velocidade atual\n2. Acelerar\n3. Desacelerar\n4. Parar\n> ")

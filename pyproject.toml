@@ -1,10 +1,11 @@
 [project]
 name = "carro"
-version = "0.1.1"
+version = "0.2.0"
 description = "Um carro, literalmente"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "rich>=15.0.0",
     "typer>=0.27.2",
 ]
 

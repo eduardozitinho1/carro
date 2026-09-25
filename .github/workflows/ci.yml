@@ -30,6 +30,9 @@ jobs:
       - name: Set up Python
         run: uv python install 3.12
 
+      - name: Generate lockfile
+        run: uv lock
+
       - name: Install dependencies
         run: uv sync --locked
 
@@ -55,6 +58,9 @@ jobs:
 
       - name: Set up Python
         run: uv python install 3.12
+
+      - name: Generate lockfile
+        run: uv lock
 
       - name: Install dependencies
         run: uv sync --locked

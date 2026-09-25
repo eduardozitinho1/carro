@@ -1,12 +1,18 @@
 [project]
 name = "carro"
-version = "0.3.0"
+version = "0.4.0"
 description = "Um carro, literalmente"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "rich>=15.0.0",
     "typer>=0.27.2",
+]
+
+[dependency-groups]
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.7",
 ]
 
 [project.scripts]

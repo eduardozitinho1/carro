@@ -1,0 +1,27 @@
+site_name: carro
+site_description: Um carro, literalmente.
+site_url: https://carro.de5.net
+
+repo_name: eduardozitinho1/carro
+repo_url: https://github.com/eduardozitinho1/carro
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Início: index.md
+  - Primeiros passos: getting-started.md
+  - Como jogar: gameplay.md
+  - Trabalhos: jobs.md
+  - Upgrades: upgrades.md
+  - Eventos: events.md
+  - Prisão: prison.md
+  - Progressão: progression.md

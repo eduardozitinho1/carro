@@ -8,6 +8,9 @@ repo_url: https://github.com/eduardozitinho1/carro
 theme:
   name: material
   language: pt-BR
+
+  custom_dir: overrides
+
   features:
     - navigation.tabs
     - navigation.sections
